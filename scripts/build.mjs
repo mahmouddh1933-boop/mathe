@@ -5,9 +5,9 @@ const read = path => readFile(new URL(path, root), 'utf8');
 // This small project uses only named declarations and local, single-line imports.
 // Reject new module syntax rather than silently emitting a broken standalone app.
 const modules = [];
-for (const path of ['src/curriculum.js', 'src/questions.js', 'src/app.js']) {
+for (const path of ['src/curriculum.js', 'src/questions.js', 'src/lessons.js', 'src/app.js']) {
   const source = (await read(path))
-    .replace(/^import \{[^\n]+\} from '\.\/(?:curriculum|questions)\.js';\r?\n/gm, '')
+    .replace(/^import \{[^\n]+\} from '\.\/(?:curriculum|questions|lessons)\.js';\r?\n/gm, '')
     .replace(/^export (?=(?:const|function)\b)/gm, '');
   if (/^\s*(?:import|export)\b/m.test(source)) throw new Error(`Unsupported module syntax in ${path}`);
   modules.push(source);

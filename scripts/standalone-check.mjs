@@ -19,8 +19,8 @@ try {
   page.on('request', r => requests.push(r.url()));
   // about:blank does not permit localStorage, exercising the in-memory fallback.
   await page.setContent(html);
-  await page.locator('.hero').waitFor();
-  assert.equal(await page.locator('.hero').evaluate(e => getComputedStyle(e).backgroundColor), 'rgb(20, 62, 56)');
+  await page.locator('.studio-hero').waitFor();
+  assert.equal(await page.locator('.studio-hero').evaluate(e => getComputedStyle(e).backgroundColor), 'rgb(234, 228, 245)');
   await page.locator('#grade-select').selectOption('6');
   await page.locator('[data-nav="quiz"]').first().click();
   await page.locator('#quiz-form button[type="submit"]').click();
@@ -32,11 +32,21 @@ try {
   assert.equal(await page.locator('.result-list details').count(), 10);
   await page.locator('[data-nav="progress"]').first().click();
   assert.equal(await page.locator('.stat strong').first().innerText(), '10');
+  await page.locator('#grade-select').selectOption('7');
+  await page.locator('[data-nav="topics"]').first().click();
+  await page.locator('[data-topic="equation"]').click();
+  await page.locator('[data-learning-action="begin"]').click();
+  const prompt=await page.locator('.learning-task>h2').innerText();
+  const rhs=Number(prompt.match(/= (\d+)/)[1]);
+  await page.locator('.training-steps input').fill(String(rhs));
+  await page.locator('#learning-form button[type="submit"]').click();
+  await page.locator('.learning-success').waitFor();
+  assert.match(await page.locator('.stage-counter').innerText(),/^1/);
   await page.setViewportSize({ width:390, height:844 });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert.deepEqual(errors, []);
   assert.deepEqual(requests, [], 'Standalone file must not request modules, styles, or external resources');
-  console.log('Standalone HTML passed: copied file, embedded styles, no network requests, quiz, explanations, session progress without storage, mobile layout. Direct file: navigation is blocked by the cloud browser policy and was not claimed as tested.');
+  console.log('Standalone HTML passed: copied file, embedded styles, no network requests, quiz, explanations, learning task and stage progress without storage, mobile layout. Direct file: navigation is blocked by the cloud browser policy and was not claimed as tested.');
 } finally {
   await browser?.close();
   await rm(dir, { recursive:true, force:true });

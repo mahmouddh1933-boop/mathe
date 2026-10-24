@@ -8,7 +8,7 @@ const server = http.createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
     const file = resolve(root, '.' + (pathname === '/' ? '/index.html' : pathname));
-    if (!file.startsWith(root + sep) || (!['/index.html','/src/app.js','/src/curriculum.js','/src/questions.js','/src/style.css'].includes(pathname) && pathname !== '/')) { res.writeHead(404); res.end('Nicht gefunden'); return; }
+    if (!file.startsWith(root + sep) || (!['/index.html','/src/app.js','/src/curriculum.js','/src/questions.js','/src/lessons.js','/src/style.css'].includes(pathname) && pathname !== '/')) { res.writeHead(404); res.end('Nicht gefunden'); return; }
     const data = await readFile(file);
     res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream', 'X-Content-Type-Options': 'nosniff', 'Cache-Control':'no-cache' }); res.end(data);
   } catch { res.writeHead(404); res.end('Nicht gefunden'); }
