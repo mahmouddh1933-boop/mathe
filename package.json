@@ -1,12 +1,15 @@
 {
   "name": "mathe-entdecken",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test",
-    "check": "node --check src/app.js && node --check src/questions.js && node --check src/curriculum.js"
+    "check": "node --check src/app.js && node --check src/questions.js && node --check src/curriculum.js && node --check scripts/build.mjs && node scripts/build.mjs --check",
+    "build": "node scripts/build.mjs"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

@@ -2,16 +2,28 @@
 
 Deutschsprachige Mathelern-App mit Übungen, Wissensquiz und lokalem Lernfortschritt. Für Desktop und Smartphone, ohne Anmeldung und ohne externe Laufzeitabhängigkeiten.
 
-## Starten
+## Einfach öffnen — ohne Installation
 
-Node.js 22 oder neuer verwenden (geprüft mit Node 24.19.0):
+1. Das Repository über **Code → Download ZIP** herunterladen.
+2. Die ZIP-Datei vollständig entpacken.
+3. Die enthaltene **index.html** per Doppelklick in einem aktuellen Browser öffnen.
+
+Die Datei enthält die komplette App einschließlich Gestaltung und Aufgaben. Kein Webserver, keine Internetverbindung und kein Node.js sind für diesen Weg erforderlich. Die Datei kann auch einzeln in einen anderen Ordner kopiert werden. JavaScript muss im Browser aktiviert sein.
+
+Der Lernfortschritt wird im Browser gespeichert. Bei lokal geöffneten Dateien hängt die Speicherung vom Browser und Dateipfad ab. Beim Verschieben der Datei kann der bisherige Fortschritt daher fehlen. Falls der Browser die Speicherung verweigert, funktioniert die App für die aktuelle Sitzung weiter.
+
+### Entwicklung mit optionalem Webserver
+
+Für Codeänderungen Node.js 22 oder neuer verwenden (geprüft mit Node 24.19.0):
 
 ```bash
 cd /workspace/mathe
+# Nach Änderungen an src/ die eigenständige HTML-Datei aktualisieren:
+npm run build
 npm start
 ```
 
-Der Entwicklungsserver lauscht auf Port **3000**. Ein anderer Port lässt sich mit `PORT=3001 npm start` wählen. Kein `npm install`, kein Build, kein API-Schlüssel und keine Datenbank erforderlich. Für das Ausliefern als statische Website genügen `index.html` und `src/`; den Node-Server alternativ als einfachen lokalen Server verwenden. Keine direkte Veröffentlichung wurde vorgenommen.
+Der Entwicklungsserver lauscht auf Port **3000**. Ein anderer Port lässt sich mit `PORT=3001 npm start` wählen. Kein `npm install`, kein API-Schlüssel und keine Datenbank erforderlich. `index.html` kann auch allein auf einem statischen Webhost bereitgestellt werden. Keine Website wurde veröffentlicht.
 
 ## Enthalten
 
@@ -48,6 +60,7 @@ Die hochgeladene Referenz „Vokabeltrainer-modern (21).zip“ ließ sich wegen 
 ## Prüfen
 
 ```bash
+npm run build
 npm run check
 npm test
 ```
@@ -66,6 +79,14 @@ node scripts/browser-check.mjs
 
 Falls eine andere Version oder ein anderer Installationsort verwendet wird, `PLAYWRIGHT_MODULE` auf die Datei `playwright-core/index.mjs` setzen. `CHROMIUM_PATH` und `BASE_URL` lassen sich ebenfalls überschreiben. Das Prüfskript verwendet einen frischen Browserkontext und keine vorhandenen Lerndaten.
 
+Für eine zusätzliche Prüfung der einzelnen HTML-Datei ohne Quellordner:
+
+```bash
+node scripts/standalone-check.mjs
+```
+
+Dieser Test kopiert nur die fertige `index.html` in einen temporären Ordner und lädt ihren Inhalt in den Browser. Er prüft eingebettete Gestaltung, Quiz, Erklärungen, Sitzungsfortschritt bei gesperrtem Browserspeicher und null zusätzliche Netzwerkanfragen. Der Cloud-Testbrowser verbietet `file:`-Navigation per Verwaltungsrichtlinie; ein tatsächlicher Doppelklick konnte in dieser Umgebung deshalb nicht getestet werden. In einer Browserumgebung, die lokale Dateien erlaubt, lässt sich der vollständige Browserablauf zusätzlich mit `BASE_URL=file:///absoluter/pfad/index.html node scripts/browser-check.mjs` ausführen.
+
 Die Browserprüfung kontrolliert Navigation, Pflichtantwort, Überspringen, richtige Wiederholung und Entfernen eines Fehlers, Persistenz nach Neuladen, Suche, Merkkarten, eine vollständige 10-Aufgaben-Runde, Abbrechen des Zurücksetzens und mobile Darstellung ohne horizontales Überlaufen. Screenshots entstehen in `/tmp/mathe-*.png`.
 
 ## Aufbau
@@ -73,6 +94,9 @@ Die Browserprüfung kontrolliert Navigation, Pflichtantwort, Überspringen, rich
 - `src/curriculum.js`: Klassen, Themen, Beschreibungen und Merksätze
 - `src/questions.js`: Generatoren, Antwortprüfung und Darstellung von Lösungen
 - `src/app.js`: Navigation, Übungen, Quiz und Lernfortschritt
+- `src/index.template.html`: HTML-Vorlage
+- `scripts/build.mjs`: erzeugt die eigenständig öffnende `index.html` ohne zusätzliche Pakete
+- `index.html`: mitgelieferte fertige App; nach Quelländerungen mit `npm run build` neu erzeugen
 - `src/style.css`: responsive Gestaltung ohne externe Schriften
 - `server.mjs`: schlanker Entwicklungsserver mit explizit erlaubten öffentlichen Dateien
 - `tests/questions.test.js`: automatisierte Funktions- und Mathematikprüfungen
